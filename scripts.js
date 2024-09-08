@@ -113,63 +113,61 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-    function showWordMeanings(word, element) {
-        const meanings = clickableWords[word];
+    
+function showWordMeanings(word, element) {
+    const meanings = clickableWords[word];
 
-        // Mevcut olan tüm tooltiplere bakıyoruz ve varsa kaldırıyoruz
-        const existingTooltips = document.querySelectorAll('.tooltip');
-        existingTooltips.forEach(tooltip => tooltip.remove());
+    // Remove any existing tooltips
+    const existingTooltips = document.querySelectorAll('.tooltip');
+    existingTooltips.forEach(tooltip => tooltip.remove());
 
-        if (meanings && meanings.length > 0) {
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            const random = Math.floor(Math.random() * meanings.length);
-            var meaning = "";
-            meanings[random].forEach(tempMeaning => meaning += tempMeaning + "<br>");
-            tooltip.innerHTML = meaning;
+    if (meanings && meanings.length > 0) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        const random = Math.floor(Math.random() * meanings.length);
+        let meaning = "";
+        meanings[random].forEach(tempMeaning => meaning += tempMeaning + "<br>");
+        tooltip.innerHTML = meaning;
 
-            document.body.appendChild(tooltip);
+        document.body.appendChild(tooltip);
 
-            const elementRect = element.getBoundingClientRect();
-            tooltip.style.position = 'absolute';
-            tooltip.style.display = 'block';
+        const elementRect = element.getBoundingClientRect();
+        tooltip.style.position = 'absolute';
+        tooltip.style.display = 'block';
 
-            // Tooltip boyutu hesaplanıyor
-            const tooltipRect = tooltip.getBoundingClientRect();
+        // Calculate tooltip position
+        const tooltipRect = tooltip.getBoundingClientRect();
+        let top = elementRect.top + window.scrollY - tooltipRect.height - 5;
+        let left = elementRect.left + window.scrollX + (elementRect.width / 2) - (tooltipRect.width / 2);
 
-            // Başlangıçta top ve left değerlerini ayarlayın
-            let top = elementRect.top + window.scrollY - tooltipRect.height - 5;
-            let left = elementRect.left + window.scrollX + (elementRect.width / 2) - (tooltipRect.width / 2);
-
-            // Tooltip sağa taşarsa sol tarafa kaydırın
-            if (left + tooltipRect.width > window.innerWidth) {
-                left = window.innerWidth - tooltipRect.width - 5; // 5px boşluk bırakın
-            }
-
-            // Tooltip sola taşarsa sağ tarafa kaydırın
-            if (left < 0) {
-                left = 5; // Sol tarafta 5px boşluk bırakın
-            }
-
-            tooltip.style.top = `${top}px`;
-            tooltip.style.left = `${left}px`;
-
-            // Tooltip görünüm animasyonu
-            tooltip.style.opacity = 0;
-            tooltip.style.transition = 'opacity 0.3s ease-in-out';
-            setTimeout(() => {
-                tooltip.style.opacity = 1;
-            }, 50);
-
-            // Fare elementi terk ettiğinde tooltip'i kaldırın
-            element.addEventListener('mouseleave', function () {
-                tooltip.style.opacity = 0;
-                setTimeout(() => {
-                    tooltip.remove();
-                }, 300);
-            });
+        if (left + tooltipRect.width > window.innerWidth) {
+            left = window.innerWidth - tooltipRect.width - 5;
         }
+        if (left < 0) {
+            left = 5;
+        }
+
+        tooltip.style.top = `${top}px`;
+        tooltip.style.left = `${left}px`;
+
+        // Fade-in animation for the tooltip
+        tooltip.style.opacity = 0;
+        tooltip.style.transition = 'opacity 0.3s ease-in-out';
+        setTimeout(() => {
+            tooltip.style.opacity = 1;
+        }, 50);
+
+        // Remove the underline and tooltip when the mouse leaves the element
+        element.addEventListener('mouseleave', function () {
+            tooltip.style.opacity = 0;
+            setTimeout(() => {
+                tooltip.remove();
+                element.style.textDecoration = 'none';  // Remove underline
+            }, 300);
+        });
     }
+}
+
 
 
 
